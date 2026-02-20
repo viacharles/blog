@@ -1,0 +1,71 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs');
+  return docs.map((doc) => {
+    const path = doc.id.replace(/^\//, '').replace(/\.(md|mdx)$/, '');
+    const [lang, ...slugParts] = path.split('/');
+    return {
+      params: {
+        lang,
+        slug: slugParts.join('/')
+      },
+      props: { doc }
+    };
+  });
+}
+
+const { doc } = Astro.props;
+const { Content, headings } = await render(doc);
+const lang = Astro.params.lang;
+const slug = Astro.params.slug;
+
+const allDocs = await getCollection('docs');
+const langDocs = allDocs
+  .filter((entry) => entry.id.startsWith(`${lang}/`))
+  .map((entry) => {
+    const path = entry.id.replace(/^\//, '').replace(/\.(md|mdx)$/, '');
+    const [, ...slugParts] = path.split('/');
+    return {
+      title: entry.data.title,
+      section: entry.data.section,
+      order: entry.data.order,
+      slug: slugParts.join('/')
+    };
+  });
+
+const sectionMap = new Map();
+for (const item of langDocs) {
+  if (!sectionMap.has(item.section)) {
+    sectionMap.set(item.section, { title: item.section, items: [], order: item.order });
+  }
+  const section = sectionMap.get(item.section);
+  section.items.push({ title: item.title, slug: item.slug, order: item.order });
+  section.order = Math.min(section.order, item.order);
+}
+
+const sections = Array.from(sectionMap.values())
+  .map((section) => ({
+    ...section,
+    items: section.items.sort((a, b) => a.order - b.order)
+  }))
+  .sort((a, b) => a.order - b.order);
+
+const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+---
+
+<BaseLayout
+  title={doc.data.title}
+  description={doc.data.description}
+  lang={lang}
+  slug={slug}
+  sections={sections}
+  toc={toc}
+>
+  <article class="doc">
+    <h1 class="doc-title">{doc.data.title}</h1>
+    <Content />
+  </article>
+</BaseLayout>

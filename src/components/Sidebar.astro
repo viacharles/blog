@@ -1,0 +1,66 @@
+---
+const { sections = [], lang = 'en', currentSlug = '' } = Astro.props;
+---
+
+<nav class="sidebar-nav" aria-label="Documentation">
+  {sections.map((section) => (
+    <details class="menu-group" open={section.items.some((item) => item.slug === currentSlug)}>
+      <summary>{section.title} ({section.items.length})</summary>
+      <ul>
+        {section.items.map((item) => (
+          <li class={item.slug === currentSlug ? 'active' : ''}>
+            <a href={`/${lang}/${item.slug}`}>{item.slug === currentSlug ? '>' : ''} {item.title}</a>
+          </li>
+        ))}
+      </ul>
+    </details>
+  ))}
+</nav>
+
+<style lang="scss">
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+
+    .menu-group {
+      padding: 12px 0 6px 12px;
+
+      summary {
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--muted);
+        list-style: none;
+
+        &::-webkit-details-marker {
+          display: none;
+        }
+      }
+
+      ul {
+        list-style: none;
+        padding: 8px 0 0 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      li {
+        a {
+          display: block;
+          border-radius: 8px;
+          font-size: 1rem;
+          text-decoration: none;
+          color: var(--ink);
+        }
+
+        &.active a {
+          color: var(--accent-2);
+          font-weight: 600;
+        }
+      }
+    }
+  }
+</style>

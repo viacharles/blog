@@ -1,0 +1,12 @@
+---
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'en' } },
+    { params: { lang: 'zh-Hant' } },
+    { params: { lang: 'ja' } }
+  ];
+}
+
+const { lang } = Astro.params;
+return Astro.redirect(`/${lang}/overview`);
+---
