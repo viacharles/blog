@@ -1,6 +1,8 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import cover from '../../assets/cover/cover-test.png';
+
 
 export async function getStaticPaths() {
   const docs = await getCollection('docs');
@@ -65,7 +67,13 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
   toc={toc}
 >
   <article class="doc">
-    <h1 class="doc-title">{doc.data.title}</h1>
+     <h1 class="doc-title">{doc.data.title}</h1>
+    <div class="doc-summary">
+         <img src={cover.src}>
+        {doc.data.summary && <p>{doc.data.summary}</p>}
+    </div>
+    
+
     <Content />
   </article>
 </BaseLayout>

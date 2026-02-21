@@ -7,7 +7,7 @@ const { headings = [] } = Astro.props;
     <ul>
       {headings.map((heading) => (
         <li class={`depth-${heading.depth}`}>
-          <a href={`#${heading.slug}`} data-toc-link={heading.slug}>
+          <a href={`#${heading.slug}-anchor`} data-toc-link={heading.slug}>
             {heading.text}
           </a>
         </li>
@@ -21,6 +21,16 @@ const { headings = [] } = Astro.props;
   if (toc) {
     const links = Array.from(toc.querySelectorAll('[data-toc-link]'));
     const headings = Array.from(document.querySelectorAll('article h2, article h3'));
+
+    headings.forEach((heading) => {
+      if (!heading.id) return;
+      const anchorId = `${heading.id}-anchor`;
+      if (document.getElementById(anchorId)) return;
+      const anchor = document.createElement('span');
+      anchor.id = anchorId;
+      anchor.className = 'anchor-target';
+      heading.parentNode?.insertBefore(anchor, heading);
+    });
 
     const setActive = (id) => {
       links.forEach((link) => {
@@ -44,14 +54,17 @@ const { headings = [] } = Astro.props;
     );
 
     headings.forEach((heading) => observer.observe(heading));
-
-    if (location.hash) {
-      setActive(location.hash.replace('#', ''));
-    }
   }
 </script>
 
 <style lang="scss">
+  :global(.anchor-target) {
+    display: block;
+    position: relative;
+    top: calc(-1 * (var(--header-height) - 75px));
+    height: 0;
+  }
+
   .toc-nav {
     font-size: 13px;
     padding: 12px;
