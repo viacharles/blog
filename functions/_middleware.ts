@@ -1,11 +1,4 @@
-interface PagesFunction {
-    request: Request
-    env: any
-    params: Record<string, string>
-    waitUntil: Function
-    next: Function
-    data: any
-}
+import type { PagesFunction } from "@cloudflare/workers-types";
 
 const COOKIE_NAME = 'locale';
 const SUPPORTED = ['en', 'zh-Hant'] as const;
@@ -23,17 +16,13 @@ function isBot(userAgent: string | null): boolean {
 function parseCookies(cookieHeader: string | null): Record<string, string> {
     const out: Record<string, string> = {};
     if (!cookieHeader) return out;
-
     for (const part of cookieHeader.split(";")) {
         const trimmed = part.trim();
         if (!trimmed) continue;
-
         const eq = trimmed.indexOf("=");
         if (eq === -1) continue;
-
         const k = trimmed.slice(0, eq).trim();
         const v = trimmed.slice(eq + 1).trim();
-
         if (k) out[k] = decodeURIComponent(v);
     }
     return out;
@@ -41,49 +30,36 @@ function parseCookies(cookieHeader: string | null): Record<string, string> {
 
 function detectLangFromAcceptLanguage(al: string | null): Lang | null {
     if (!al) return null;
-
     // e.g. "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7"
     const parts = al.split(",").map(p => p.trim()).filter(Boolean);
-
     for (const p of parts) {
         // p could be "zh-TW" or "zh;q=0.9"
         const langTag = p.split(";")[0]?.trim().toLowerCase();
         if (!langTag) continue;
-
         if (langTag === "en" || langTag.startsWith("en-")) return "en";
         if (langTag === "zh" || langTag.startsWith("zh-")) return "zh-Hant";
     }
-
     return null;
 }
 
 function redirect(url: URL, toPath: string, cookieLang?: Lang): Response {
-    const target = new URL(toPath, url);
-
-    const res = Response.redirect(target, 302);
-
-    // Redirect 不該被 cache：不然第一個人的語言會污染其他人
-    res.headers.set("Cache-Control", "no-store, max-age=0");
-
-    // 有些中介層更愛亂快取，保守加上
-    res.headers.set("Pragma", "no-cache");
-
-    // Debug 用：你可先留著，上線也不會害人（想乾淨再刪）
-    res.headers.set("X-I18n-Redirect", "1");
-
-    // 寫 cookie（可選）
+    const target = new URL(toPath, url).toString();
+    const headers = new Headers({
+        Location: target,
+        "Cache-Control": "no-store, max-age=0",
+        Pragma: "no-cache",
+        "X-I18n-Redirect": "1",
+        // 你這個其實也該加，避免中介層用 Accept-Language 混 cache
+        Vary: "Accept-Language",
+    });
     if (cookieLang) {
-        // 180 days
         const maxAge = 60 * 60 * 24 * 180;
-
-        // 注意：Secure 表示只在 HTTPS 傳送；Pages + 自訂網域通常都是 HTTPS
-        res.headers.append(
+        headers.append(
             "Set-Cookie",
             `${COOKIE_NAME}=${encodeURIComponent(cookieLang)}; Path=/; Max-Age=${maxAge}; SameSite=Lax; Secure`
         );
     }
-
-    return res;
+    return new Response(null, { status: 302, headers });
 }
 
 
@@ -101,7 +77,7 @@ export async function onRequest(context: PagesFunction) {
     if (isBot(userAgent)) {
         return context.next();
     }
-    const cookies = parseCookies(req.headers.get('cookie'));
+    const cookies = parseCookies(req.headers.get('cookie') || "");
     const cookieLang = cookies[COOKIE_NAME] as Lang | undefined;
     if (cookieLang && SUPPORTED.includes(cookieLang)) {
         return redirect(url, `/${cookieLang}/`)
