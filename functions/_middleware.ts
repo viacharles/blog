@@ -4,6 +4,12 @@ const COOKIE_NAME = 'locale';
 const SUPPORTED = ['en', 'zh-Hant'] as const;
 const DOC_LANGS = ['en', 'zh-Hant', 'ja'] as const;
 const DEFAULT_LANG = SUPPORTED[0];
+const FALLBACK_PATH = encodeURI('/zh-Hant/AngularMaterial屬性的預設errors');
+const LANDING_BY_LANG: Record<string, string> = {
+    en: FALLBACK_PATH,
+    'zh-Hant': FALLBACK_PATH,
+    ja: FALLBACK_PATH,
+};
 
 type Lang = (typeof SUPPORTED)[number];
 
@@ -63,6 +69,9 @@ function redirect(url: URL, toPath: string, cookieLang?: Lang): Response {
     return new Response(null, { status: 302, headers });
 }
 
+function getLandingPath(lang: string): string {
+    return LANDING_BY_LANG[lang] ?? FALLBACK_PATH;
+}
 
 export async function onRequest(context: PagesFunction) {
     const req: Request = context.request;
@@ -70,7 +79,7 @@ export async function onRequest(context: PagesFunction) {
     const bareLang = DOC_LANGS.find((lang) => url.pathname === `/${lang}` || url.pathname === `/${lang}/`);
 
     if (bareLang) {
-        return redirect(url, `/${bareLang}/overview`);
+        return redirect(url, getLandingPath(bareLang));
     }
 
     if (url.pathname !== '/') {
@@ -78,7 +87,7 @@ export async function onRequest(context: PagesFunction) {
     }
     const queryLang = url.searchParams.get('lang');
     if (queryLang && (SUPPORTED as readonly string[]).includes(queryLang)) {
-        return redirect(url, `/${queryLang}/overview`, queryLang as Lang)
+        return redirect(url, getLandingPath(queryLang), queryLang as Lang)
     }
     const userAgent = req.headers.get("user-agent");
     if (isBot(userAgent)) {
@@ -87,10 +96,10 @@ export async function onRequest(context: PagesFunction) {
     const cookies = parseCookies(req.headers.get('cookie') || "");
     const cookieLang = cookies[COOKIE_NAME] as Lang | undefined;
     if (cookieLang && SUPPORTED.includes(cookieLang)) {
-        return redirect(url, `/${cookieLang}/overview`)
+        return redirect(url, getLandingPath(cookieLang))
     }
     const detected = detectLangFromAcceptLanguage(req.headers.get('accept-language')) ?? DEFAULT_LANG;
-    return redirect(url, `/${detected}/overview`, detected)
+    return redirect(url, getLandingPath(detected), detected)
 
 
 }

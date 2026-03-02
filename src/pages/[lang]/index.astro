@@ -1,4 +1,11 @@
 ---
+const fallbackPath = encodeURI('/zh-Hant/AngularMaterial屬性的預設errors');
+const landingByLang: Record<string, string> = {
+  en: fallbackPath,
+  'zh-Hant': fallbackPath,
+  ja: fallbackPath
+};
+
 export async function getStaticPaths() {
   return [
     { params: { lang: 'en' } },
@@ -8,5 +15,5 @@ export async function getStaticPaths() {
 }
 
 const { lang } = Astro.params;
-return Astro.redirect(`/${lang}/overview`);
+return Astro.redirect(landingByLang[lang ?? ''] ?? fallbackPath);
 ---
