@@ -220,6 +220,53 @@ const {
     li {
       line-height: 1.7;
       color: var(--ink);
+      white-space: pre-wrap;
+    }
+
+    a {
+      color: var(--accent-2);
+      text-decoration: underline;
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 0.15em;
+      word-break: break-word;
+    }
+
+    strong,
+    b {
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      max-width: 100%;
+      margin: 20px 0;
+      border-collapse: collapse;
+      display: block;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fcfbf8;
+    }
+
+    thead {
+      background: #f1ede7;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+      white-space: pre-wrap;
+    }
+
+    th {
+      font-weight: 700;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
     }
 
     code {
