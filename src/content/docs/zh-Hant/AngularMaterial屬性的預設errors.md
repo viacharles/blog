@@ -1,5 +1,5 @@
 ---
-title: AngularMaterial屬性的預設errors-20260227
+title: AngularMaterial屬性的預設errors
 description: Angular Material 預設 errors 筆記。
 pubDate: 2026-03-02
 tags:

@@ -2,6 +2,7 @@ import type { PagesFunction } from "@cloudflare/workers-types";
 
 const COOKIE_NAME = 'locale';
 const SUPPORTED = ['en', 'zh-Hant'] as const;
+const DOC_LANGS = ['en', 'zh-Hant', 'ja'] as const;
 const DEFAULT_LANG = SUPPORTED[0];
 
 type Lang = (typeof SUPPORTED)[number];
@@ -66,12 +67,18 @@ function redirect(url: URL, toPath: string, cookieLang?: Lang): Response {
 export async function onRequest(context: PagesFunction) {
     const req: Request = context.request;
     const url = new URL(req.url);
+    const bareLang = DOC_LANGS.find((lang) => url.pathname === `/${lang}` || url.pathname === `/${lang}/`);
+
+    if (bareLang) {
+        return redirect(url, `/${bareLang}/overview`);
+    }
+
     if (url.pathname !== '/') {
         return context.next();
     }
     const queryLang = url.searchParams.get('lang');
     if (queryLang && (SUPPORTED as readonly string[]).includes(queryLang)) {
-        return redirect(url, `/${queryLang}/`, queryLang as Lang)
+        return redirect(url, `/${queryLang}/overview`, queryLang as Lang)
     }
     const userAgent = req.headers.get("user-agent");
     if (isBot(userAgent)) {
@@ -80,10 +87,10 @@ export async function onRequest(context: PagesFunction) {
     const cookies = parseCookies(req.headers.get('cookie') || "");
     const cookieLang = cookies[COOKIE_NAME] as Lang | undefined;
     if (cookieLang && SUPPORTED.includes(cookieLang)) {
-        return redirect(url, `/${cookieLang}/`)
+        return redirect(url, `/${cookieLang}/overview`)
     }
     const detected = detectLangFromAcceptLanguage(req.headers.get('accept-language')) ?? DEFAULT_LANG;
-    return redirect(url, `/${detected}/`, detected)
+    return redirect(url, `/${detected}/overview`, detected)
 
 
 }
