@@ -6,7 +6,8 @@ const docs = defineCollection({
     description: z.string(),
     summary: z.string().optional(),
     order: z.number(),
-    section: z.string()
+    section: z.string(),
+    pubDate: z.string()
   })
 });
 

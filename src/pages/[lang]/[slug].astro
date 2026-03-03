@@ -68,12 +68,11 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
 >
   <article class="doc">
      <h1 class="doc-title">{doc.data.title}</h1>
+     <p>{doc.data.pubDate}</p>
     <div class="doc-summary">
          <img src={cover.src}>
         {doc.data.summary && <p>{doc.data.summary}</p>}
     </div>
-    
-
     <Content />
   </article>
 </BaseLayout>
