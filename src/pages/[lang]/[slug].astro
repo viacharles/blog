@@ -24,11 +24,9 @@ const { Content, headings } = await render(doc);
 const lang = Astro.params.lang;
 const slug = Astro.params.slug;
 const pubDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
   month: 'long',
   day: '2-digit',
-  hour: '2-digit',
-  minute: '2-digit',
-  hour12: false
 }).format(doc.data.pubDate).replace(',', '');
 
 const allDocs = await getCollection('docs');
@@ -63,6 +61,15 @@ const sections = Array.from(sectionMap.values())
   .sort((a, b) => a.order - b.order);
 
 const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const languageLinks = Object.fromEntries(
+  allDocs
+    .filter((entry) => entry.data.translationKey === doc.data.translationKey)
+    .map((entry) => {
+      const path = entry.id.replace(/^\//, '').replace(/\.(md|mdx)$/, '');
+      const [entryLang, ...slugParts] = path.split('/');
+      return [entryLang, `/${entryLang}/${slugParts.join('/')}`];
+    })
+);
 ---
 
 <BaseLayout
@@ -70,17 +77,70 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
   description={doc.data.description}
   lang={lang}
   slug={slug}
+  languageLinks={languageLinks}
   sections={sections}
   toc={toc}
 >
   <article class="doc">
-    <p class="section">{doc.data.section}</p>
-     <h1 class="doc-title">{doc.data.title}</h1>
+    <div class="doc-meta">
+      <p class="section">{doc.data.section}</p>
+    </div>
+    <h1 class="doc-title">{doc.data.title}</h1>
      <p class="date">{pubDate}</p>
     <div class="doc-summary">
          <!-- <img src={cover.src}> -->
         {doc.data.summary && <p>{doc.data.summary}</p>}
     </div>
     <Content />
+     {doc.data.tags && doc.data.tags.length > 0 && (
+        <ul class="tags" aria-label="Tags">
+          {doc.data.tags.map((tag) => (
+            <li class="tag">{tag}</li>
+          ))}
+        </ul>
+      )}
   </article>
 </BaseLayout>
+
+<style lang="scss">
+  .doc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    margin: 1rem 0 12px;
+  }
+
+  .section,
+  .date {
+    margin: 0;
+  }
+
+  .date {
+    color: grey;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tag {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #eef7fa;
+    border: 1px solid #d4e9ef;
+    color: var(--accent-2);
+    font-size: 0.92rem;
+    line-height: 1.4;
+  }
+
+  .doc-title {
+    font-size: 27px;
+    margin: 0 0 12px;
+  }
+</style>

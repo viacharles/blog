@@ -1,11 +1,17 @@
 ---
-const { lang = 'en', slug = '' } = Astro.props;
+const { lang = 'en', slug = '', languageLinks = {} } = Astro.props;
 const languages = [
   { code: 'en', label: 'English' },
   { code: 'zh-Hant', label: '中文 (ZH)' },
   { code: 'ja', label: '日本語' }
 ];
-const slugPath = slug ? `/${slug}` : '';
+const fallbackLinks = Object.fromEntries(
+  languages.map((item) => [item.code, `/${item.code}${slug ? `/${slug}` : ''}`])
+);
+const resolvedLanguageLinks = {
+  ...fallbackLinks,
+  ...languageLinks
+};
 ---
 
 <header class="site-header">
@@ -30,8 +36,8 @@ const slugPath = slug ? `/${slug}` : '';
       <select
         name="lang"
         aria-label="Language"
-        data-slug={slug}
-        onchange={`const lang = this.value; const slug = this.dataset.slug; location.href = '/' + lang + (slug ? '/' + slug : '');`}
+        data-language-links={JSON.stringify(resolvedLanguageLinks)}
+        onchange={`const links = JSON.parse(this.dataset.languageLinks || '{}'); const nextUrl = links[this.value] || '/' + this.value; location.href = nextUrl;`}
       >
         {languages.map((item) => (
           <option value={item.code} selected={item.code === lang}>

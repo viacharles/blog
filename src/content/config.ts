@@ -5,6 +5,8 @@ const docs = defineCollection({
     title: z.string(),
     description: z.string(),
     summary: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    translationKey: z.string(),
     order: z.number(),
     section: z.string(),
     pubDate: z.coerce.date()

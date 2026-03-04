@@ -1,11 +1,12 @@
 ---
 title: Angular Material コンポーネントのデフォルト errors
 description: Angular Material の組み込み validation error のメモ。
-pubDate: 2026-03-02
+pubDate: 2026 March 02
 tags:
   - Angular
   - Angular Material
   - Reactive form
+translationKey: angular-material-default-errors
 draft: false
 order: 3
 section: Angular Material
@@ -36,11 +37,11 @@ dynamic form で error handling を共通化したい場合は、ここを把握
 ## mat-datepicker のプロパティ
 
 - [ **matDatepickerFilter** ]: control の値が filter で弾かれた場合に出ます。
-<pre>
+```json
 { "matDatepickerFilter": true }
-</pre>
+```
 - [ **matDatepickerMin** ] / [ **matDatepickerMax** ]: control の値が `min` より小さい、または `max` より大きい場合に出ます。
-<pre>
+```json
 {
     "matDatepickerMin": {
       "min": "2026-02-09T16:00:00.000Z", // min
@@ -51,21 +52,21 @@ dynamic form で error handling を共通化したい場合は、ここを把握
       "actual": "2026-02-24T16:00:00.000Z" // control value
     }
 }
-</pre>
+```
 - [ **matDatepickerParse** ]: 日付を手入力して format が壊れた場合に出ます。
-<pre>
+```json
 {
 "matDatepickerParse": {
       "text": "not-a-date" // input に表示されている文字列。control value は null になる
     }
 }
-</pre>
+```
 <br>
 
 ## mat-date-range のプロパティ
 
 - [ **rangeStart** ] / [ **rangeEnd** ]: control value が有効範囲外の場合に出ます。
-<pre>
+```json
 {
 "rangeStart": {
     "matStartDateInvalid": {
@@ -80,12 +81,12 @@ dynamic form で error handling を共通化したい場合は、ここを把握
     }
   },
 }
-</pre>
+```
 
 ## mat-timepicker のプロパティ
 
 - [ **matTimepickerMin** ] / [ **matTimepickerMax** ]: control の値が `min` より小さい、または `max` より大きい場合に出ます。
-<pre>
+```json
 {
  "matTimepickerMax": {
       "max": "2026-02-15T10:00:00.000Z",
@@ -96,15 +97,15 @@ dynamic form で error handling を共通化したい場合は、ここを把握
       "actual": "2026-02-15T00:30:00.000Z"
     }
 }
-</pre>
+```
 - [ **matTimepickerParse** ]: 時刻を手入力して format が壊れた場合に出ます。
-<pre>
+```json
 {
   "matTimepickerParse": {
       "text": "25:99"
     }
 }
-</pre>
+```
 <br>
 <br>
 

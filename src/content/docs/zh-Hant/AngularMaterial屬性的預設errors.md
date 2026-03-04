@@ -1,11 +1,12 @@
 ---
 title: template 屬性的特別 errors
 description: Angular Material 預設 errors 筆記。
-pubDate: 2026-03-02
+pubDate: 2026 March 02
 tags:
   - Angular
   - Angular Material
   - Reactive form
+translationKey: angular-material-default-errors
 draft: false
 order: 3
 section: Angular Material
@@ -40,11 +41,11 @@ section: Angular Material
 ## mat-datepicker 的屬性
 
 - [ **matDatepickerFilter** ]，如果 control 的值被濾掉了，會出現這個錯誤。
-<pre>
+```json
 { "matDatepickerFilter": true }
-</pre>
+```
 - [ **matDatepickerMin** ] / [ **matDatepickerMax** ]，如果 control 的值小於 min / 大於 max，會出現這個錯誤。
-<pre>
+```json
 {
     "matDatepickerMin": {
       "min": "2026-02-09T16:00:00.000Z", // min
@@ -55,20 +56,20 @@ section: Angular Material
       "actual": "2026-02-24T16:00:00.000Z" // control 值
     }
 }
-</pre> 
+```
  - [ **matDatepickerParse** ]，如果手改日期導致格式壞掉，會出驗這個錯誤。
-<pre>
+```json
 {
 "matDatepickerParse": {
       "text": "not-a-date" // 目前input顯示字串，但 control value 會是 null 。
     }
 }
-</pre>
+```
 <br>
 
 ## mat-date-range 的屬性
 - [ **rangeStart** ] / [ **rangeEnd** ]，如果 control 值不在範圍內，會出現這個錯誤。
-<pre>
+```json
 {
 "rangeStart": {
     "matStartDateInvalid": {
@@ -83,10 +84,10 @@ section: Angular Material
     }
   },
 }
-</pre>
+```
 ## mat-timepicker 的屬性
 - [ **matTimepickerMin** ] / [ **matTimepickerMax** ]，如果 control 的值小於 min / 大於 max，會出現這個錯誤。
-<pre>
+```json
 {
  "matTimepickerMax": {
       "max": "2026-02-15T10:00:00.000Z",
@@ -97,15 +98,15 @@ section: Angular Material
       "actual": "2026-02-15T00:30:00.000Z"
     }
 }
-</pre>
+```
 - [ **matTimepickerParse** ]如果手改日期導致格式壞掉，會出現這個錯誤。
-<pre>
+```json
 {
   "matTimepickerParse": {
       "text": "25:99"
     }
 }
-</pre>
+```
 <br>
 <br>
 

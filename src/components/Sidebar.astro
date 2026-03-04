@@ -1,8 +1,20 @@
 ---
+import avatarImage from '../assets/avata.png';
+
 const { sections = [], lang = 'en', currentSlug = '' } = Astro.props;
+const profileImageUrl = '/avata.png';
 ---
 
 <nav class="sidebar-nav" aria-label="Documentation">
+  <div class="profile-card">
+    {profileImageUrl ? (
+      <img class="profile-avatar" src={profileImageUrl} alt="charles avatar" />
+    ) : (
+      <div class="profile-avatar profile-avatar-placeholder" aria-hidden="true">V</div>
+    )}
+    <p class="profile-name">charles</p>
+  </div>
+
   {sections.map((section) => (
     <details class="menu-group" open={section.items.some((item) => item.slug === currentSlug)}>
       <summary>{section.title} ({section.items.length})</summary>
@@ -22,6 +34,41 @@ const { sections = [], lang = 'en', currentSlug = '' } = Astro.props;
     display: flex;
     flex-direction: column;
     font-size: 14px;
+
+    .profile-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: 10px;
+      padding: 18px 12px 14px;
+      margin-bottom: 8px;
+    }
+
+    .profile-avatar {
+      width: 85px;
+      height: 85px;
+      // border-radius: 999px;
+      object-fit: cover;
+      border: 2px solid #dceaf0;
+      background: linear-gradient(135deg, #f7fbfc, #e6f2f5);
+      box-shadow: 0 10px 24px rgba(13, 156, 198, 0.08);
+    }
+
+    .profile-avatar-placeholder {
+      display: grid;
+      place-items: center;
+      color: var(--accent-2);
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .profile-name {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
 
     .menu-group {
       padding: 12px 0 6px 12px;

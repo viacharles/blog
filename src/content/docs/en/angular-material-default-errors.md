@@ -1,11 +1,12 @@
 ---
 title: Default Errors in Angular Material Components
 description: Notes on built-in Angular Material validation errors.
-pubDate: 2026-03-02
+pubDate: 2026 March 02
 tags:
   - Angular
   - Angular Material
   - Reactive form
+translationKey: angular-material-default-errors
 draft: false
 order: 3
 section: Angular Material
@@ -36,11 +37,11 @@ Here is the整理 result:
 ## mat-datepicker properties
 
 - [ **matDatepickerFilter** ] appears when the control value is filtered out.
-<pre>
+```json
 { "matDatepickerFilter": true }
-</pre>
+```
 - [ **matDatepickerMin** ] / [ **matDatepickerMax** ] appear when the control value is smaller than `min` or greater than `max`.
-<pre>
+```json
 {
     "matDatepickerMin": {
       "min": "2026-02-09T16:00:00.000Z", // min
@@ -51,21 +52,21 @@ Here is the整理 result:
       "actual": "2026-02-24T16:00:00.000Z" // control value
     }
 }
-</pre>
+```
 - [ **matDatepickerParse** ] appears when manually editing the date breaks the format.
-<pre>
+```json
 {
 "matDatepickerParse": {
       "text": "not-a-date" // current input string, while control value becomes null
     }
 }
-</pre>
+```
 <br>
 
 ## mat-date-range properties
 
 - [ **rangeStart** ] / [ **rangeEnd** ] appear when the control value is outside the valid range.
-<pre>
+```json
 {
 "rangeStart": {
     "matStartDateInvalid": {
@@ -80,12 +81,12 @@ Here is the整理 result:
     }
   },
 }
-</pre>
+```
 
 ## mat-timepicker properties
 
 - [ **matTimepickerMin** ] / [ **matTimepickerMax** ] appear when the control value is smaller than `min` or greater than `max`.
-<pre>
+```json
 {
  "matTimepickerMax": {
       "max": "2026-02-15T10:00:00.000Z",
@@ -96,15 +97,15 @@ Here is the整理 result:
       "actual": "2026-02-15T00:30:00.000Z"
     }
 }
-</pre>
+```
 - [ **matTimepickerParse** ] appears when manually editing the time breaks the format.
-<pre>
+```json
 {
   "matTimepickerParse": {
       "text": "25:99"
     }
 }
-</pre>
+```
 <br>
 <br>
 
