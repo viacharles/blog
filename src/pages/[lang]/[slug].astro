@@ -23,6 +23,13 @@ const { doc } = Astro.props;
 const { Content, headings } = await render(doc);
 const lang = Astro.params.lang;
 const slug = Astro.params.slug;
+const pubDate = new Intl.DateTimeFormat('en-US', {
+  month: 'long',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false
+}).format(doc.data.pubDate).replace(',', '');
 
 const allDocs = await getCollection('docs');
 const langDocs = allDocs
@@ -67,10 +74,11 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
   toc={toc}
 >
   <article class="doc">
+    <p class="section">{doc.data.section}</p>
      <h1 class="doc-title">{doc.data.title}</h1>
-     <p>{doc.data.pubDate}</p>
+     <p class="date">{pubDate}</p>
     <div class="doc-summary">
-         <img src={cover.src}>
+         <!-- <img src={cover.src}> -->
         {doc.data.summary && <p>{doc.data.summary}</p>}
     </div>
     <Content />

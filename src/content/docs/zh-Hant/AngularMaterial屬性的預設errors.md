@@ -1,5 +1,5 @@
 ---
-title: AngularMaterial屬性的預設errors
+title: template 屬性的特別 errors
 description: Angular Material 預設 errors 筆記。
 pubDate: 2026-03-02
 tags:
@@ -11,31 +11,104 @@ order: 3
 section: Angular Material
 ---
 
-  我以為**「沒加 validator 就不會有 errors」**，結果今天發現 mat-datepicker 它自己會往 FormControl.errors 塞 matDatepickerFilter。
 
-  最近遇到一個專案，
-他的動態表單錯誤要統一用一個popup顯示全部提示，
-方法是用 reactiveForm control的 error key(轉i18n) 和 field config(自訂) 的標題屬性組成提示字串。
-但發現 mat-datepicker 會丟出我沒想到的 error。
+<br>
+ <em> 引發我好奇的是遇到在 mat-datepicker 系統裡的屬性 [matDatepickerFilter] 自己丟出來的錯誤。 </em>
+<br>
+<br>
+  matDatepickerFilter 的功能是傳入一個函式，透過函式判斷月曆裡每個日期是否可被選擇。沒想到control value 的值如果被濾掉(不合格)，control 會自動得到一個 
+  
+  { matDatepickerFilter: true }。
 
-  **原來 " material 元件有自己的預設的html屬性binding error "。**
 
-就算 formControl 裡沒設定 validators，也沒綁 html5 input 限制屬性(require, min...ex)，
-也會因為 material 自己預設的機制而讓 formControl 裡的 errors 裡有東西。
-
-我遇到的是在 mat-datepicker 系統裡的屬性 [matDatepickerFilter] 自己丟出來的錯誤。
-
-  matDatepickerFilter 的功能是傳入一個函式，透過函式判斷月曆裡每個日期是否可被選擇。沒想到control value 的值如果被濾掉(不合格)，control 會自動得到一個 { matDatepickerFilter: true }。
 
   於是問 ai material 還有沒有其他這種預設的 error，
 列出的主要都是跟 date time 相關的元件，大部分跟日期的格式化有關，
+
+這在做 dynamic form 統一處理錯誤的時候需要注意。
+
 我請ai做一個test sample，
 用 angular 20 測，
+<br>
+<br>
 有興趣的可以進來試試看:
-
-[測試範例](https://test-sample-bjk.pages.dev/tests/angular-material-default-errors-20260227)
-
+<a href="https://test-sample-bjk.pages.dev/tests/angular-material-default-errors-20260227" target="_blank" rel="noopener noreferrer">測試範例</a>
+<br>
 以下是整理資料：
+<br>
+
+## mat-datepicker 的屬性
+
+- [ **matDatepickerFilter** ]，如果 control 的值被濾掉了，會出現這個錯誤。
+<pre>
+{ "matDatepickerFilter": true }
+</pre>
+- [ **matDatepickerMin** ] / [ **matDatepickerMax** ]，如果 control 的值小於 min / 大於 max，會出現這個錯誤。
+<pre>
+{
+    "matDatepickerMin": {
+      "min": "2026-02-09T16:00:00.000Z", // min
+      "actual": "2026-01-31T16:00:00.000Z" // control 值
+    },
+     "matDatepickerMax": {
+      "max": "2026-02-19T16:00:00.000Z", // max
+      "actual": "2026-02-24T16:00:00.000Z" // control 值
+    }
+}
+</pre> 
+ - [ **matDatepickerParse** ]，如果手改日期導致格式壞掉，會出驗這個錯誤。
+<pre>
+{
+"matDatepickerParse": {
+      "text": "not-a-date" // 目前input顯示字串，但 control value 會是 null 。
+    }
+}
+</pre>
+<br>
+
+## mat-date-range 的屬性
+- [ **rangeStart** ] / [ **rangeEnd** ]，如果 control 值不在範圍內，會出現這個錯誤。
+<pre>
+{
+"rangeStart": {
+    "matStartDateInvalid": {
+      "end": "2026-02-09T16:00:00.000Z",
+      "actual": "2026-02-19T16:00:00.000Z"
+    }
+  },
+  "rangeEnd": {
+    "matEndDateInvalid": {
+      "start": "2026-02-19T16:00:00.000Z",
+      "actual": "2026-02-09T16:00:00.000Z"
+    }
+  },
+}
+</pre>
+## mat-timepicker 的屬性
+- [ **matTimepickerMin** ] / [ **matTimepickerMax** ]，如果 control 的值小於 min / 大於 max，會出現這個錯誤。
+<pre>
+{
+ "matTimepickerMax": {
+      "max": "2026-02-15T10:00:00.000Z",
+      "actual": "2026-02-15T11:30:00.000Z"
+    }
+ "matTimepickerMin": {
+      "min": "2026-02-15T01:00:00.000Z",
+      "actual": "2026-02-15T00:30:00.000Z"
+    }
+}
+</pre>
+- [ **matTimepickerParse** ]如果手改日期導致格式壞掉，會出現這個錯誤。
+<pre>
+{
+  "matTimepickerParse": {
+      "text": "25:99"
+    }
+}
+</pre>
+<br>
+<br>
+
 
 | Error Key | 來源 | 功能 |
 | --- | --- | --- |

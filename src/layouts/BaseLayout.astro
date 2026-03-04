@@ -151,6 +151,7 @@ const {
 
   .content {
     padding-top: 8px;
+    min-width: 0;
   }
 
   .menu-overlay {
@@ -193,6 +194,7 @@ const {
     border-radius: 18px;
     margin-bottom: 48px;
     padding-bottom: 48px;
+    max-width: 100%;
 
     img {
       width: 250px;
@@ -228,7 +230,8 @@ const {
     li {
       line-height: 1.7;
       color: var(--ink);
-      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     ul,
@@ -303,19 +306,26 @@ const {
     code {
       font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, SFMono-Regular, Menlo, monospace;
       background: #f4f1ec;
-      padding: 0.15em 0.45em;
+      padding: 0.3em 0.45em;
       border-radius: 6px;
       border: 1px solid #e6ddd2;
       font-size: 0.92em;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     pre {
+      display: block;
+      max-width: 100%;
+      // min-width: 0;
       background: #15181a;
       color: #f5f5f5;
       padding: 16px;
       margin: 20px 0;
-      white-space: pre;
+      white-space: pre-wrap;
       overflow-x: auto;
+      overflow-wrap: anywhere;
+      word-break: break-word;
       border-radius: 12px;
       border: 1px solid #24292e;
       line-height: 1.7;
@@ -324,7 +334,7 @@ const {
         background: transparent;
         padding: 0;
         color: inherit;
-        white-space: pre;
+        white-space: inherit;
       }
     }
 
@@ -333,11 +343,23 @@ const {
       border: 0;
       border-top: 1px solid var(--border);
     }
+
+    br {
+      line-height: 1.1;
+    }
+  }
+
+  .section {
+     margin: 1rem 0 12px;
   }
 
     .doc-title {
       font-size: 27px;
-      margin: 0 0 12px;
+      margin: 1rem 0 12px;
+    }
+    .date {
+      margin-bottom: 1rem;
+      color: grey;
     }
 
   .doc-summary {
